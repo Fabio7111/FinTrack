@@ -7,16 +7,16 @@ namespace FinTrack.Models
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "O nome da conta é obrigatório.")]
         [StringLength(100)]
         public string Nome { get; set; } = string.Empty;
 
-        [Required]
+        [Required(ErrorMessage = "O saldo inicial é obrigatório.")]
         [Column(TypeName = "decimal(18,2)")]
         [Display(Name = "Saldo Inicial")]
         public decimal SaldoInicial { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "O usuário é obrigatório.")]
         public string UsuarioId { get; set; } = string.Empty;
 
         public Usuario? Usuario { get; set; }
