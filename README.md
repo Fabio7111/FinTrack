@@ -88,11 +88,11 @@ Pré-requisitos:
 - SQL Server LocalDB
 
 Passos:
-git clone https://github.com/NatSouza07/FinTrack.git
-cd FinTrack
-dotnet restore
-dotnet ef database update
-dotnet run
+- git clone https://github.com/NatSouza07/FinTrack.git
+- cd FinTrack
+- dotnet restore
+- dotnet ef database update
+- dotnet run
 
 Acesse: https://localhost:5001
 
@@ -106,9 +106,9 @@ Inclui:
 
 ----------------------------------------
 #AUTORES
-Natã — Responsável Técnico / Backend
-Fábio — Banco / Relatórios
-Gustavo — Front-End
+- Natã — Responsável Técnico / Backend
+- Fábio — Banco / Relatórios
+- Gustavo — Front-End
 
 ----------------------------------------
 "Your finances. Always on track."
