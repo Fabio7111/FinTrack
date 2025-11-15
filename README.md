@@ -19,6 +19,7 @@ Crie contas, cadastre receitas e despesas, defina metas mensais, visualize relat
 
 ----------------------------------------
 #OBJETIVO DO SISTEMA
+
 O FinTrack é um sistema web de gestão financeira pessoal criado como projeto acadêmico.
 Permite ao usuário:
 - Controlar entradas e saídas
@@ -29,6 +30,7 @@ Permite ao usuário:
 
 ----------------------------------------
 #FUNCIONALIDADES
+
 - Transações: CRUD completo com cálculos automáticos
 - Contas: cadastro com saldo inicial
 - Categorias: Entrada / Saída
@@ -43,6 +45,7 @@ Permite ao usuário:
 
 ----------------------------------------
 #ESTRUTURA DO BANCO DE DADOS
+
 Tabelas principais:
 - Usuario
 - Conta
@@ -53,6 +56,7 @@ Tabelas principais:
 
 ----------------------------------------
 #AUTENTICAÇÃO E SEGURANÇA
+
 - ASP.NET Core Identity (Scaffold)
 - Políticas de senha configuradas
 - Perfis Admin / User
@@ -61,6 +65,7 @@ Tabelas principais:
 
 ----------------------------------------
 #TECNOLOGIAS UTILIZADAS
+
 - C# (.NET 8)
 - ASP.NET Core MVC
 - Entity Framework Core
@@ -73,6 +78,7 @@ Tabelas principais:
 
 ----------------------------------------
 #ESTRUTURA DO PROJETO
+
 FinTrack/
  Controllers/
  Models/
@@ -99,6 +105,7 @@ Acesse: https://localhost:5001
 
 ----------------------------------------
 #CONSULTAS E RELATÓRIOS
+
 Inclui:
 - Totais de entradas/saídas
 - Agrupamento por categoria
@@ -107,11 +114,13 @@ Inclui:
 
 ----------------------------------------
 #AUTORES
+
 - Natã — Responsável Técnico / Backend
 - Fábio — Banco / Relatórios
 - Gustavo — Front-End
 
 ----------------------------------------
+
 "Your finances. Always on track."
 
 FinTrack.
