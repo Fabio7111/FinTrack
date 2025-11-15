@@ -1,6 +1,7 @@
 #FinTrack - Your finances. Always on track.
 
-Sistema de Controle Financeiro Pessoal
+#Sistema de Controle Financeiro Pessoal
+
 Gerencie suas finanças pessoais de forma prática e segura com o FinTrack, um sistema web desenvolvido em C# / ASP.NET Core MVC / Entity Framework Core / SQL Server.
 Crie contas, cadastre receitas e despesas, defina metas mensais, visualize relatórios e acompanhe gráficos de desempenho financeiro em tempo real.
 
