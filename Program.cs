@@ -39,6 +39,8 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+await DataSeeder.SeedAsync(app.Services);
+
 app.MapRazorPages();
 
 app.Run();
