@@ -4,28 +4,27 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FinTrack.Data;
 using FinTrack.Models;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 
 namespace FinTrack.Controllers
 {
-    // Adicione [Authorize] se for necessário que o usuário esteja logado
-    // [Authorize] 
+    [Authorize] // Exige login para acessar qualquer ação
     public class CategoriasController : Controller
     {
         private readonly FinTrackContext _context;
 
         public CategoriasController(FinTrackContext context)
         {
-            // Injeção de dependência do contexto do banco
             _context = context;
         }
 
-        // GET: Categorias (Index com Filtro por Tipo)
+        // INDEX -----------------------------------------------------------
+        // Lista categorias com filtro opcional por Tipo (Receita/Despesa)
         public async Task<IActionResult> Index(int? tipoId)
         {
-            // Prepara a lista de Tipos (Receita/Despesa) para o Dropdown de filtro na View
+            // Lista de Tipos (Enum) para o filtro dropdown
             ViewData["Tipos"] = Enum.GetValues(typeof(TipoCategoria))
                 .Cast<TipoCategoria>()
                 .Select(t => new SelectListItem
@@ -36,21 +35,19 @@ namespace FinTrack.Controllers
 
             var categorias = _context.Categorias.AsQueryable();
 
-            // Aplica o filtro se o tipoId for fornecido e for um valor válido do Enum
+            // Aplica o filtro se o tipoId for válido
             if (tipoId.HasValue && Enum.IsDefined(typeof(TipoCategoria), tipoId.Value))
             {
                 var tipoFiltro = (TipoCategoria)tipoId.Value;
                 categorias = categorias.Where(c => c.Tipo == tipoFiltro);
 
-                // Salva o ID selecionado para manter o filtro ativo na View
                 ViewData["SelectedTipoId"] = tipoId.Value;
             }
 
-            // Executa a consulta e retorna a lista filtrada ou completa
             return View(await categorias.ToListAsync());
         }
 
-        // GET: Categorias/Details/5
+        // DETAILS ---------------------------------------------------------
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -59,7 +56,7 @@ namespace FinTrack.Controllers
             }
 
             var categoria = await _context.Categorias
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(c => c.Id == id);
 
             if (categoria == null)
             {
@@ -69,30 +66,27 @@ namespace FinTrack.Controllers
             return View(categoria);
         }
 
-        // GET: Categorias/Create
+        // CREATE (GET) ----------------------------------------------------
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Categorias/Create
+        // CREATE (POST) ---------------------------------------------------
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nome,Tipo")] Categoria categoria)
         {
-            // --- VERIFICAÇÃO DE DUPLICIDADE (Nome + Tipo) ---
-            // Verifica se já existe uma categoria com o mesmo Nome E Tipo
+            // Verificação de duplicidade Nome + Tipo
             var existeDuplicata = await _context.Categorias
                 .AnyAsync(c => c.Nome == categoria.Nome && c.Tipo == categoria.Tipo);
 
             if (existeDuplicata)
             {
-                // Se duplicado, adiciona um erro ao ModelState, impedindo o salvamento
-                ModelState.AddModelError("Nome", "Já existe uma categoria com este Nome e Tipo (Receita/Despesa).");
+                ModelState.AddModelError("Nome", "Já existe uma categoria com este Nome e Tipo.");
             }
-            // --------------------------------------------------
 
-            if (ModelState.IsValid) // Valida Data Annotations e o erro de duplicidade acima
+            if (ModelState.IsValid)
             {
                 _context.Add(categoria);
                 await _context.SaveChangesAsync();
@@ -102,7 +96,7 @@ namespace FinTrack.Controllers
             return View(categoria);
         }
 
-        // GET: Categorias/Edit/5
+        // EDIT (GET) ------------------------------------------------------
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -116,10 +110,11 @@ namespace FinTrack.Controllers
             {
                 return NotFound();
             }
+
             return View(categoria);
         }
 
-        // POST: Categorias/Edit/5
+        // EDIT (POST) -----------------------------------------------------
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Tipo")] Categoria categoria)
@@ -127,6 +122,17 @@ namespace FinTrack.Controllers
             if (id != categoria.Id)
             {
                 return NotFound();
+            }
+
+            // Verificação de duplicidade Nome + Tipo no Edit
+            var existeDuplicata = await _context.Categorias
+                .AnyAsync(c => c.Id != categoria.Id &&
+                               c.Nome == categoria.Nome &&
+                               c.Tipo == categoria.Tipo);
+
+            if (existeDuplicata)
+            {
+                ModelState.AddModelError("Nome", "Já existe uma categoria com este Nome e Tipo.");
             }
 
             if (ModelState.IsValid)
@@ -138,7 +144,6 @@ namespace FinTrack.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    // Trata erro de concorrência: verifica se o item ainda existe
                     if (!_context.Categorias.Any(e => e.Id == categoria.Id))
                     {
                         return NotFound();
@@ -148,12 +153,14 @@ namespace FinTrack.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(categoria);
         }
 
-        // GET: Categorias/Delete/5 (Confirmação)
+        // DELETE (GET) ----------------------------------------------------
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -161,9 +168,8 @@ namespace FinTrack.Controllers
                 return NotFound();
             }
 
-            // Busca a categoria para exibir na tela de confirmação
             var categoria = await _context.Categorias
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(c => c.Id == id);
 
             if (categoria == null)
             {
@@ -173,7 +179,7 @@ namespace FinTrack.Controllers
             return View(categoria);
         }
 
-        // POST: Categorias/Delete/5 (Execução da Exclusão)
+        // DELETE (POST) ---------------------------------------------------
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -186,6 +192,7 @@ namespace FinTrack.Controllers
             }
 
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
     }
