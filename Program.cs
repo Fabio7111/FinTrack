@@ -7,15 +7,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
 builder.Services.AddDbContext<FinTrackContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("FinTrackConnection")));
 
-builder.Services.AddDefaultIdentity<Usuario>(options =>
+builder.Services.AddIdentity<Usuario, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
 })
-.AddEntityFrameworkStores<FinTrackContext>();
+.AddEntityFrameworkStores<FinTrackContext>()
+.AddDefaultTokenProviders();
 
 var app = builder.Build();
 
