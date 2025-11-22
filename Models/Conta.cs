@@ -19,9 +19,9 @@ namespace FinTrack.Models
         [Required(ErrorMessage = "O usuário é obrigatório.")]
         public string UsuarioId { get; set; } = string.Empty;
 
-        public Usuario? Usuario { get; set; }
+        public Usuario Usuario { get; set; }
 
-        public ICollection<Transacao>? Transacoes { get; set; }
+        public ICollection<Transacao> Transacoes { get; set; }
 
     }
 }

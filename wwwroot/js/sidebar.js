@@ -1,14 +1,46 @@
-﻿document.getElementById("sidebarToggle").onclick = () => {
+﻿document.addEventListener("DOMContentLoaded", () => {
+
     const sidebar = document.getElementById("sidebar");
-    const main = document.getElementById("mainContent");
+    const sidebarSpacer = document.getElementById("sidebar-spacer");
     const icon = document.getElementById("toggleIcon");
+    const toggleButton = document.getElementById("sidebarToggle");
 
-    sidebar.classList.toggle("collapsed");
-    main.classList.toggle("collapsed");
+    if (!sidebar || !sidebarSpacer || !icon || !toggleButton) {
+        console.warn("FinTrack Sidebar: Elementos não encontrados.");
+        return;
+    }
 
-    const collapsed = sidebar.classList.contains("collapsed");
+    const applySidebarState = (collapsed) => {
+        sidebar.classList.toggle("collapsed", collapsed);
+        sidebarSpacer.classList.toggle("collapsed", collapsed);
+        icon.className = collapsed
+            ? "bi bi-chevron-double-right"
+            : "bi bi-chevron-double-left";
+    };
 
-    icon.className = collapsed
-        ? "bi bi-chevron-double-right"
-        : "bi bi-chevron-double-left";
-};
+    const savedState = localStorage.getItem("sidebarCollapsed") === "true";
+    applySidebarState(savedState);
+
+    let isThrottled = false;
+    toggleButton.addEventListener("click", () => {
+
+        if (isThrottled) return;
+        isThrottled = true;
+
+        const collapsed = !sidebar.classList.contains("collapsed");
+
+        applySidebarState(collapsed);
+        localStorage.setItem("sidebarCollapsed", collapsed);
+
+        setTimeout(() => {
+            isThrottled = false;
+        }, 250);
+    });
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key.toLowerCase() === "m") {
+            toggleButton.click();
+        }
+    });
+
+});

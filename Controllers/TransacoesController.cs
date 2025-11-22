@@ -15,7 +15,7 @@ namespace FinTrack.Controllers
         private readonly UserManager<Usuario> _userManager = userManager;
 
         // VIEWBAG
-        private async Task PopularSelectListsAsync(string usuarioId, Transacao? transacao = null)
+        private async Task PopularSelectListsAsync(string usuarioId, Transacao transacao = null)
         {
             ViewBag.Contas = new SelectList(
                 await _context.Contas.Where(c => c.UsuarioId == usuarioId).ToListAsync(),
