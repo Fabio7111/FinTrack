@@ -26,6 +26,8 @@ builder.Services.AddDbContext<FinTrackContext>(options =>
 
 builder.Services.AddScoped<AccountService>();
 
+builder.Services.AddScoped<IReportService, ReportService>();
+
 builder.Services.AddIdentity<Usuario, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
