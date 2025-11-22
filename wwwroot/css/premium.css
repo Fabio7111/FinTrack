@@ -1,11 +1,13 @@
 ﻿@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
 .ft-body {
-    background: #0c0c0c;
+    background: #1e1e1e;
     color: white;
     font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
+    display: flex;
+    min-height: 100vh;
 }
 
 .ft-sidebar {
@@ -23,6 +25,16 @@
 }
 
     .ft-sidebar.collapsed {
+        width: 80px;
+    }
+
+#sidebar-spacer {
+    width: 260px;
+    transition: width 0.3s ease;
+    flex-shrink: 0;
+}
+
+    #sidebar-spacer.collapsed {
         width: 80px;
     }
 
@@ -195,14 +207,10 @@
 
 
 .ft-main-content {
-    margin-left: 260px;
-    transition: 0.3s ease;
+    flex-grow: 1;
     padding: 30px;
+    background: #0c0c0c;
 }
-
-    .ft-main-content.collapsed {
-        margin-left: 80px;
-    }
 
 .auth-container {
     height: 100vh;
@@ -307,8 +315,6 @@
     .ft-nav-link:hover {
         color: #00ffcc !important;
     }
-
-/* ---------- FinTrack Manage (padronização) ---------- */
 
 .ft-manage-header {
     margin-bottom: 1.25rem;

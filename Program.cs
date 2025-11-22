@@ -1,21 +1,39 @@
 using FinTrack.Data;
 using FinTrack.Models;
-using Microsoft.EntityFrameworkCore;
+using FinTrack.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+
+builder.Services.AddControllersWithViews(options =>
+{
+    var policy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+
+    options.Filters.Add(new AuthorizeFilter(policy));
+});
+
+builder.Services.AddRazorPages();
 
 builder.Services.AddDbContext<FinTrackContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("FinTrackConnection")));
 
-builder.Services.AddDefaultIdentity<Usuario>(options =>
+builder.Services.AddScoped<AccountService>();
+
+builder.Services.AddScoped<IReportService, ReportService>();
+
+builder.Services.AddIdentity<Usuario, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
 })
-.AddEntityFrameworkStores<FinTrackContext>();
+.AddEntityFrameworkStores<FinTrackContext>()
+.AddDefaultTokenProviders();
 
 var app = builder.Build();
 

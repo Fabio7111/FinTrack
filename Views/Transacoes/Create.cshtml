@@ -1,0 +1,101 @@
+﻿@model FinTrack.Models.Transacao
+@{
+    ViewData["Title"] = "Nova Transação";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="ft-page-container">
+
+    <h2 class="fw-bold text-white mb-3">Nova Transação</h2>
+    <p class="text-secondary mb-4">Preencha os dados abaixo para registrar uma nova transação.</p>
+
+    <div class="ft-card p-4">
+
+        <form asp-action="Create" method="post">
+
+            <div class="mb-3">
+                <label asp-for="Data" class="form-label text-white-50"></label>
+                <input asp-for="Data" class="form-control" type="date" />
+                <span asp-validation-for="Data" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Valor" class="form-label text-white-50"></label>
+                <input asp-for="Valor" class="form-control ft-money" />
+                <span asp-validation-for="Valor" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Tipo" class="form-label text-white-50"></label>
+                <select asp-for="Tipo" class="form-select" asp-items="ViewBag.Tipos"></select>
+                <span asp-validation-for="Tipo" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CategoriaId" class="form-label text-white-50"></label>
+                <select asp-for="CategoriaId" class="form-select" asp-items="ViewBag.Categorias"></select>
+                <span asp-validation-for="CategoriaId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ContaId" class="form-label text-white-50"></label>
+                <select asp-for="ContaId" class="form-select" asp-items="ViewBag.Contas"></select>
+                <span asp-validation-for="ContaId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="TipoPagamentoId" class="form-label text-white-50"></label>
+                <select asp-for="TipoPagamentoId" class="form-select" asp-items="ViewBag.TiposPagamento"></select>
+                <span asp-validation-for="TipoPagamentoId" class="text-danger"></span>
+            </div>
+
+            <div class="mt-4 d-flex gap-3">
+                <a asp-action="Index" class="btn btn-secondary px-4">Cancelar</a>
+
+                <button type="submit"
+                        class="btn fw-bold px-4"
+                        style="background:#ffd700; color:#000; border-radius:10px;">
+                    Salvar Transação
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            AutoNumeric.multiple('.ft-money', {
+                digitGroupSeparator: ".",
+                decimalCharacter: ",",
+                decimalPlaces: 2,
+                currencySymbol: "R$ ",
+                currencySymbolPlacement: "p"
+            });
+        });
+    </script>
+}
+
+<style>
+    .ft-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        backdrop-filter: blur(12px);
+    }
+
+    .ft-main-content {
+        background: #1e1e1e !important;
+        padding: 40px !important;
+        min-height: 100vh;
+    }
+
+    .ft-page-container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+</style>
