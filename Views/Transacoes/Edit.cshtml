@@ -67,21 +67,6 @@
 
 </div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            AutoNumeric.multiple('.ft-money', {
-                digitGroupSeparator: ".",
-                decimalCharacter: ",",
-                decimalPlaces: 2,
-                currencySymbol: "R$ ",
-                currencySymbolPlacement: "p"
-            });
-        });
-    </script>
-}
-
 <style>
     .ft-card {
         background: rgba(255, 255, 255, 0.04);
@@ -101,3 +86,36 @@
         margin: 0 auto;
     }
 </style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // inicializa AutoNumeric nos campos de dinheiro
+            AutoNumeric.multiple('.ft-money', {
+                digitGroupSeparator: ".",
+                decimalCharacter: ",",
+                decimalPlaces: 2,
+                currencySymbol: "R$ ",
+                currencySymbolPlacement: "p"
+            });
+
+            // Desformatar ft-money antes do submit para garantir model binding decimal
+            const form = document.querySelector('form[asp-action="Edit"]') || document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    document.querySelectorAll('.ft-money').forEach(function (el) {
+                        if (!el) return;
+                        let v = el.value ?? '';
+                        v = v.replace(/\s/g, '');            // remove espaços
+                        v = v.replace(/R\$|r\$/g, '');       // remove símbolo R$
+                        v = v.replace(/\./g, '');            // remove separador de milhar
+                        v = v.replace(/,/g, '.');            // transforma decimal vírgula -> ponto
+                        el.value = v;
+                    });
+                }, { once: false });
+            }
+        });
+    </script>
+}
