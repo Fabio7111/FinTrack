@@ -92,26 +92,27 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // inicializa AutoNumeric nos campos de dinheiro
-            AutoNumeric.multiple('.ft-money', {
-                digitGroupSeparator: ".",
-                decimalCharacter: ",",
-                decimalPlaces: 2,
-                currencySymbol: "R$ ",
-                currencySymbolPlacement: "p"
-            });
+            if (window.AutoNumeric) {
+                AutoNumeric.multiple('.ft-money', {
+                    digitGroupSeparator: ".",
+                    decimalCharacter: ",",
+                    decimalPlaces: 2,
+                    currencySymbol: "R$ ",
+                    currencySymbolPlacement: "p"
+                });
+            }
 
-            // Desformatar ft-money antes do submit para garantir model binding decimal
-            const form = document.querySelector('form[asp-action="Edit"]') || document.querySelector('form');
+            // Antes do submit, limpamos R$ e pontos de milhar, mantendo a vírgula (pt-BR)
+            const form = document.querySelector('form[asp-action="Create"], form[asp-action="Edit"], form');
             if (form) {
-                form.addEventListener('submit', function (e) {
+                form.addEventListener('submit', function () {
                     document.querySelectorAll('.ft-money').forEach(function (el) {
                         if (!el) return;
                         let v = el.value ?? '';
                         v = v.replace(/\s/g, '');            // remove espaços
                         v = v.replace(/R\$|r\$/g, '');       // remove símbolo R$
                         v = v.replace(/\./g, '');            // remove separador de milhar
-                        v = v.replace(/,/g, '.');            // transforma decimal vírgula -> ponto
+                        // NÃO trocar vírgula por ponto — model binder pt-BR espera "1234,56"
                         el.value = v;
                     });
                 }, { once: false });
@@ -119,3 +120,4 @@
         });
     </script>
 }
+

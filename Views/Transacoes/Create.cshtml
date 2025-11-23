@@ -90,40 +90,33 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Inicializa AutoNumeric (já existente no seu layout via CDN)
-            AutoNumeric.multiple('.ft-money', {
-                digitGroupSeparator: ".",
-                decimalCharacter: ",",
-                decimalPlaces: 2,
-                currencySymbol: "R$ ",
-                currencySymbolPlacement: "p"
-            });
+            if (window.AutoNumeric) {
+                AutoNumeric.multiple('.ft-money', {
+                    digitGroupSeparator: ".",
+                    decimalCharacter: ",",
+                    decimalPlaces: 2,
+                    currencySymbol: "R$ ",
+                    currencySymbolPlacement: "p"
+                });
+            }
 
-            // Antes de enviar o formulário, "desformatamos" os campos ft-money
-            const form = document.querySelector('form[asp-action="Create"]') || document.querySelector('form');
+            // Antes do submit, limpamos R$ e pontos de milhar, mantendo a vírgula (pt-BR)
+            const form = document.querySelector('form[asp-action="Create"], form[asp-action="Edit"], form');
             if (form) {
-                form.addEventListener('submit', function (e) {
-                    // para cada input com .ft-money, converte "R$ 1.234,56" -> "1234.56"
+                form.addEventListener('submit', function () {
                     document.querySelectorAll('.ft-money').forEach(function (el) {
                         if (!el) return;
-                        // valor formatado pelo AutoNumeric (ex: "R$ 1.234,56")
                         let v = el.value ?? '';
-
-                        // Remove tudo que não seja dígito, vírgula ou ponto ou sinal de menos
-                        // Em seguida, trocar separador de decimal brasileiro ',' por '.'
-                        // e remover separadores de milhar (pontos)
-                        // Ex: "R$ 1.234,56" -> "1234.56"
                         v = v.replace(/\s/g, '');            // remove espaços
-                        v = v.replace(/R\$|r\$/g, '');       // remove símbolo R$ se houver
+                        v = v.replace(/R\$|r\$/g, '');       // remove símbolo R$
                         v = v.replace(/\./g, '');            // remove separador de milhar
-                        v = v.replace(/,/g, '.');            // transforma decimal vírgula -> ponto
-
-                        // Se vazio, mantém vazio (deixa o model binder tratar)
+                        // NÃO trocar vírgula por ponto — model binder pt-BR espera "1234,56"
                         el.value = v;
                     });
-                    // deixa o envio prosseguir
                 }, { once: false });
             }
         });
     </script>
 }
+
+

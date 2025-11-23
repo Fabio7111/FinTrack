@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using FinTrack.Models;
 
 namespace FinTrack.Services
 {
     public interface IReportService
     {
-        Task<decimal[]> GetTotals(int ano, string usuarioId);
-        Task<(string[] labels, decimal[] data)> GetByCategory(DateTime inicio, DateTime fim, string usuarioId);
-        Task<List<PivotDto>> GetPivotByYear(int ano, string usuarioId);
+        // Retorna total por mês (1..12) para um ano: [{ month: 1, entrada: 123.45, saida: 67.89 }, ...]
+        Task<IEnumerable<MonthlyTotalsDto>> GetMonthlyTotalsAsync(string userId, int year);
+
+        // Retorna total por categoria para um mês/ano: [{ categoria: "Alimentação", total: 123.45 }, ...]
+        Task<IEnumerable<CategoryTotalsDto>> GetCategoryTotalsAsync(string userId, int year, int month);
     }
 
-    public class PivotDto
-    {
-        public string Categoria { get; set; } = string.Empty;
-        public decimal[] Valores { get; set; } = new decimal[12];
-    }
+    public record MonthlyTotalsDto(int Month, decimal Entrada, decimal Saida);
+    public record CategoryTotalsDto(string Categoria, decimal Total);
 }
