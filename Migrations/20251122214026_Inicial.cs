@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FinTrack.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialIdentity : Migration
+    public partial class Inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,6 +30,8 @@ namespace FinTrack.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    NomeCompleto = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    FotoPerfil = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -48,6 +50,33 @@ namespace FinTrack.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categorias",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Tipo = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categorias", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TiposPagamento",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nome = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TiposPagamento", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -96,8 +125,8 @@ namespace FinTrack.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
@@ -141,8 +170,8 @@ namespace FinTrack.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -154,6 +183,92 @@ namespace FinTrack.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Contas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    SaldoInicial = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Contas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Contas_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Metas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ValorMeta = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Mes = table.Column<int>(type: "int", nullable: false),
+                    Ano = table.Column<int>(type: "int", nullable: false),
+                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Metas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Metas_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Transacoes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Tipo = table.Column<int>(type: "int", nullable: false),
+                    Valor = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Data = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ContaId = table.Column<int>(type: "int", nullable: false),
+                    CategoriaId = table.Column<int>(type: "int", nullable: false),
+                    TipoPagamentoId = table.Column<int>(type: "int", nullable: false),
+                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Transacoes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Transacoes_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Transacoes_Categorias_CategoriaId",
+                        column: x => x.CategoriaId,
+                        principalTable: "Categorias",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Transacoes_Contas_ContaId",
+                        column: x => x.ContaId,
+                        principalTable: "Contas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Transacoes_TiposPagamento_TipoPagamentoId",
+                        column: x => x.TipoPagamentoId,
+                        principalTable: "TiposPagamento",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -194,6 +309,48 @@ namespace FinTrack.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categorias_Nome_Tipo",
+                table: "Categorias",
+                columns: new[] { "Nome", "Tipo" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Contas_UsuarioId",
+                table: "Contas",
+                column: "UsuarioId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Metas_UsuarioId",
+                table: "Metas",
+                column: "UsuarioId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TiposPagamento_Nome",
+                table: "TiposPagamento",
+                column: "Nome",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transacoes_CategoriaId",
+                table: "Transacoes",
+                column: "CategoriaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transacoes_ContaId",
+                table: "Transacoes",
+                column: "ContaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transacoes_TipoPagamentoId",
+                table: "Transacoes",
+                column: "TipoPagamentoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transacoes_UsuarioId",
+                table: "Transacoes",
+                column: "UsuarioId");
         }
 
         /// <inheritdoc />
@@ -215,7 +372,22 @@ namespace FinTrack.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Metas");
+
+            migrationBuilder.DropTable(
+                name: "Transacoes");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Categorias");
+
+            migrationBuilder.DropTable(
+                name: "Contas");
+
+            migrationBuilder.DropTable(
+                name: "TiposPagamento");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
